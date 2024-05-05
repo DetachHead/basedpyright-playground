@@ -594,6 +594,12 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStandard: false,
         isEnabledInStrict: false,
     },
+    {
+        name: 'reportMultipleInheritance',
+        description: 'Controls reporting of classes that inherit from multiple base classes',
+        isEnabledInStandard: false,
+        isEnabledInStrict: false,
+    },
 ];
 
 export const configSettingsAlphabetized = configSettings.sort((a, b) => {
