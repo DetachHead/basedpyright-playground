@@ -595,8 +595,8 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStrict: false,
     },
     {
-        name: 'reportMultipleInheritance',
-        description: 'Controls reporting of classes that inherit from multiple base classes',
+        name: 'reportUnsafeMultipleInheritance',
+        description: "Controls reporting of multiple inheritance where a base class's constructor may not get called",
         isEnabledInStandard: false,
         isEnabledInStrict: false,
     },
