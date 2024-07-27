@@ -335,7 +335,7 @@ function areSettingsDefault(settings: PlaygroundSettings): boolean {
 
 const defaultOption = (option: PyrightConfigSetting, settings: PlaygroundSettings) =>
     ({
-        all: true,
+        all: option.isEnabeldInAll ?? true,
         strict: option.isEnabledInStrict,
         standard: option.isEnabledInStandard,
     }[settings.typeCheckingMode]);
