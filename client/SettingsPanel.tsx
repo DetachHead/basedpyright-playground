@@ -169,6 +169,7 @@ export function SettingsPanel(props: SettingsPanelProps) {
                     <CheckmarkMenu
                         items={[
                             'Default',
+                            '3.14',
                             '3.13',
                             '3.12',
                             '3.11',
