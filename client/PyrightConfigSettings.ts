@@ -8,6 +8,14 @@ export interface PyrightConfigSetting {
     description: string;
     isEnabledInStandard: boolean;
     isEnabledInStrict: boolean;
+    
+    /**
+     * everything is enabled in `"all"` except discouraged rules (ideally they would be deprecated but we want
+     * to remain backwards compatible with pyright).
+     * 
+     * this is optional (defaults to `true` to minimize upstream conflicts)
+     */
+    isEnabeldInAll?: boolean
 }
 
 export const configSettings: PyrightConfigSetting[] = [
@@ -28,6 +36,7 @@ export const configSettings: PyrightConfigSetting[] = [
         description: 'Allow "# type: ignore" comments',
         isEnabledInStandard: true,
         isEnabledInStrict: true,
+        isEnabeldInAll: false,
     },
     {
         name: 'disableBytesTypePromotions',
