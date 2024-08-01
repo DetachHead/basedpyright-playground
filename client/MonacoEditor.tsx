@@ -11,13 +11,16 @@ import { StyleSheet, View } from 'react-native';
 import {
     CompletionItem,
     CompletionItemKind,
+    CompletionList,
     Diagnostic,
     DiagnosticSeverity,
     InsertReplaceEdit,
+    MarkupContent,
     Range,
     TextDocumentEdit,
 } from 'vscode-languageserver-types';
 import { LspClient } from './LspClient';
+import { HoverRequest } from 'vscode-languageserver-protocol';
 
 loader
     .init()
@@ -206,15 +209,18 @@ async function handleHoverRequest(
     }
 
     try {
-        const hoverInfo = await lspClient.getHoverForPosition(model.getValue(), {
-            line: position.lineNumber - 1,
-            character: position.column - 1,
+        const hoverInfo = await lspClient.connection.sendRequest(HoverRequest.type, {
+            textDocument: {uri: model.uri.toString()},
+            position: {
+                line: position.lineNumber - 1,
+                character: position.column - 1
+            }
         });
 
         return {
             contents: [
                 {
-                    value: hoverInfo.contents.value,
+                    value: (hoverInfo.contents as MarkupContent).value,
                 },
             ],
             range: convertRange(hoverInfo.range),
@@ -235,7 +241,7 @@ async function handleRenameRequest(
     }
 
     try {
-        const renameEdits = await lspClient.getRenameEditsForPosition(
+        const renameEdits = await lspClient.getRenameEdits(
             model.getValue(),
             {
                 line: position.lineNumber - 1,
@@ -279,7 +285,7 @@ async function handleSignatureHelpRequest(
     }
 
     try {
-        const sigInfo = await lspClient.getSignatureHelpForPosition(model.getValue(), {
+        const sigInfo = await lspClient.getSignatureHelp(model.getValue(), {
             line: position.lineNumber - 1,
             character: position.column - 1,
         });
@@ -314,10 +320,10 @@ async function handleProvideCompletionRequest(
     }
 
     try {
-        const completionInfo = await lspClient.getCompletionForPosition(model.getValue(), {
+        const completionInfo = await lspClient.getCompletion(model.getValue(), {
             line: position.lineNumber - 1,
             character: position.column - 1,
-        });
+        }) as CompletionList;
 
         return {
             suggestions: completionInfo.items.map((item) => {
@@ -346,7 +352,7 @@ async function handleResolveCompletionRequest(
     }
 
     try {
-        const result = await lspClient.resolveCompletionItem(original);
+        const result = await lspClient.resolveCompletion(original);
         return convertCompletionItem(result);
     } catch (err) {
         return null;
