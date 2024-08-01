@@ -10,19 +10,17 @@ import { Diagnostic, DiagnosticSeverity } from 'vscode-languageserver-types';
 import { HeaderPanel } from './HeaderPanel';
 import { getInitialStateFromLocalStorage, setStateToLocalStorage } from './LocalStorageUtils';
 import { LspClient } from './LspClient';
-import { LspSession } from './LspSession';
 import { MonacoEditor } from './MonacoEditor';
 import { PlaygroundSettings } from './PlaygroundSettings';
 import { ProblemsPanel } from './ProblemsPanel';
 import { RightPanel, RightPanelType } from './RightPanel';
 import { getStateFromUrl, updateUrlFromState } from './UrlUtils';
-
-const lspClient = new LspClient();
+import { PublishDiagnosticsNotification } from 'vscode-languageserver-protocol';
 
 export interface AppState {
     gotInitialState: boolean;
     code: string;
-    diagnostics: Diagnostic[];
+    diagnostics: Diagnostic[]; 
 
     settings: PlaygroundSettings;
     requestedPyrightVersion: boolean;
@@ -53,7 +51,18 @@ export default function App() {
         rightPanelType: RightPanelType.Settings,
         isProblemsPanelDisplayed: initialState.code !== '',
         isWaitingForResponse: false,
+        supportedPyrightVersions: ['1.15.0'] // TODO
     });
+
+    const lspClient = new LspClient((diagnostics) => {
+        setAppState((prevState) => {
+            return {
+                ...prevState,
+                diagnostics,
+            };
+        });
+    });
+    
 
     useEffect(() => {
         if (!appState.gotInitialState) {
@@ -61,7 +70,7 @@ export default function App() {
                 lspClient.updateCode(initialState.code);
             }
 
-            setAppState((prevState) => {
+            setAppState((prevState) => { 
                 return {
                     ...prevState,
                     gotInitialState: true,
@@ -84,23 +93,23 @@ export default function App() {
                     requestedPyrightVersion: true,
                 };
             });
+        //TODO
+        //     LspSession.getPyrightServiceStatus()
+        //         .then((status) => {
+        //             const pyrightVersions = status.pyrightVersions;
 
-            LspSession.getPyrightServiceStatus()
-                .then((status) => {
-                    const pyrightVersions = status.pyrightVersions;
-
-                    setAppState((prevState) => {
-                        return {
-                            ...prevState,
-                            latestPyrightVersion:
-                                pyrightVersions.length > 0 ? pyrightVersions[0] : undefined,
-                            supportedPyrightVersions: pyrightVersions,
-                        };
-                    });
-                })
-                .catch((err) => {
-                    // Ignore errors here.
-                });
+        //             setAppState((prevState) => {
+        //                 return {
+        //                     ...prevState,
+        //                     latestPyrightVersion:
+        //                         pyrightVersions.length > 0 ? pyrightVersions[0] : undefined,
+        //                     supportedPyrightVersions: pyrightVersions,
+        //                 };
+        //             });
+        //         })
+        //         .catch((err) => {
+        //             // Ignore errors here.
+        //         });
         }
     });
 
@@ -124,45 +133,9 @@ export default function App() {
     }, [appState.code, appState.settings]);
 
     useEffect(() => {
-        lspClient.updateSettings(appState.settings);
+        lspClient.initialize(appState.settings);
     }, [appState.settings]);
-
-    lspClient.requestNotification({
-        onDiagnostics: (diagnostics: Diagnostic[]) => {
-            setAppState((prevState) => {
-                return {
-                    ...prevState,
-                    diagnostics,
-                };
-            });
-        },
-        onError: (message: string) => {
-            setAppState((prevState) => {
-                return {
-                    ...prevState,
-                    diagnostics: [
-                        {
-                            message: `An error occurred when attempting to contact the pyright web service\n    ${message}`,
-                            severity: DiagnosticSeverity.Error,
-                            range: {
-                                start: { line: 0, character: 0 },
-                                end: { line: 0, character: 0 },
-                            },
-                        },
-                    ],
-                };
-            });
-        },
-        onWaitingForDiagnostics: (isWaiting) => {
-            setAppState((prevState) => {
-                return {
-                    ...prevState,
-                    isWaitingForResponse: isWaiting,
-                };
-            });
-        },
-    });
-
+    
     function onShowRightPanel(rightPanelType?: RightPanelType) {
         setAppState((prevState) => {
             return {

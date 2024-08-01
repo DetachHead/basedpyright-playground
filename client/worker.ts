@@ -1,0 +1,1 @@
+import 'browser-basedpyright/dist/pyright.worker'
