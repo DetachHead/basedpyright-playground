@@ -40,10 +40,14 @@ import {
     WorkspaceEdit,
 } from 'vscode-languageserver-protocol';
 import { SessionOptions } from './LspSession';
+import { getPyrightVersions, packageName } from './sessionManager'
+import 'remote-web-worker'
 
 
-interface DiagnosticRequest {
-    callback: (diags: Diagnostic[], error?: Error) => void;
+export interface LspClientNotifications {
+    onWaitingForInitialization?: (isWaiting: boolean) => void;
+    onDiagnostics?: (diag: Diagnostic[]) => void;
+    onError?: (message: string) => void; // TODO
 }
 
 const rootPath = '/src/'
@@ -54,17 +58,14 @@ const fileName = 'Untitled.py'
 
 const documentUri = rootUri + fileName
 
-const workerScriptName = "worker.js";
-
 export class LspClient {
     public connection: MessageConnection | undefined;
-    public onNotification: (diagnostics:  Diagnostic[]) => void
     private _documentVersion = 1;
     private _documentText = '';
-    private _documentDiags: PublishDiagnosticsParams | undefined;
-    private _pendingDiagRequests = new Map<number, DiagnosticRequest[]>();
+    private _notifications: LspClientNotifications;
 
-    constructor() {
+    requestNotification(notifications: LspClientNotifications) {
+        this._notifications = notifications;
     }
 
     public updateCode = (code: string) => [
@@ -72,9 +73,11 @@ export class LspClient {
     ]
 
     public async initialize(sessionOptions?: SessionOptions) {
-        const workerScript = `./${workerScriptName}`;
+        this._notifications.onWaitingForInitialization(true)
+        const workerScript = `https://cdn.jsdelivr.net/npm/${packageName}@${sessionOptions.pyrightVersion ?? (await getPyrightVersions())[0]}/dist/pyright.worker.js`;
         const foreground = new Worker(workerScript, {
             name: 'Pyright-foreground',
+            type: 'classic'
         });
         foreground.postMessage({
             type: "browser/boot",
@@ -177,18 +180,7 @@ export class LspClient {
 
                 console.info(`Received diagnostics for version: ${diagVersion}`);
 
-                // Update the cached diagnostics.
-                if (
-                    this._documentDiags === undefined ||
-                    this._documentDiags.version! < diagVersion
-                ) {
-                    this._documentDiags = diagInfo;
-                }
-
-                // Resolve any pending diagnostic requests.
-                const pendingRequests = this._pendingDiagRequests.get(diagVersion) ?? [];
-                this._pendingDiagRequests.delete(diagVersion);
-                this.onNotification(diagInfo.diagnostics)
+                this._notifications.onDiagnostics(diagInfo.diagnostics)
             }
         );
 
@@ -208,6 +200,7 @@ export class LspClient {
                 return [];
             }
         );
+        this._notifications.onWaitingForInitialization(false)
     }
 
     updateSettings = async (sessionOptions: SessionOptions) => {
@@ -358,24 +351,5 @@ export class LspClient {
                 console.error(`Error sending text document to language server: ${err}`);
                 throw err;
             });
-    }
-
-    // Cancels all pending requests.
-    cancelRequests() {
-        this._pendingDiagRequests.forEach((requestList) => {
-            requestList.forEach((request) => {
-                request.callback([], new Error('Request canceled'));
-            });
-        });
-
-        this._pendingDiagRequests.clear();
-    }
-
-    private static _logServerData(data: any) {
-        console.info(
-            `Logged from basedpyright language server: ${
-                typeof data === 'string' ? data : data.toString('utf8')
-            }`
-        );
     }
 }

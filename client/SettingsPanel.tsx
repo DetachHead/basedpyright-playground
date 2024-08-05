@@ -223,7 +223,8 @@ export function SettingsPanel(props: SettingsPanelProps) {
                 </Menu>
             </View>
 
-            <SettingsDivider />
+            {/* TODO: add back language support, currently doesn't work on the browser version of basedpyright */}
+            {/* <SettingsDivider />
             <SettingsHeader headerText={'Language'} />
             <View style={styles.selectionContainer}>
                 <Text style={styles.selectedOptionText} selectable={false}>
@@ -250,7 +251,7 @@ export function SettingsPanel(props: SettingsPanelProps) {
                         }}
                     />
                 </Menu>
-            </View>
+            </View> */}
 
             <SettingsDivider />
             <View style={styles.resetButtonContainer}>

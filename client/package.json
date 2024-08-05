@@ -3,15 +3,14 @@
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "npm run build:worker && expo start",
+    "start": "expo start",
     "web": "npm run start -- --web",
-    "build:worker": "esbuild --bundle worker.ts --outdir=public",
-    "build": "npm run build:worker && tsc && expo export -p web"
+    "build": "tsc && expo export -p web"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
+    "@expo/metro-runtime": "~3.1.3",
     "@monaco-editor/react": "^4.6.0",
-    "browser-basedpyright": "1.14.0-d2eef15ca0db199d5e8135d419f3c5d326696696",
     "expo": "~50",
     "expo-status-bar": "~1.11.1",
     "lz-string": "^1.5.0",
@@ -21,15 +20,15 @@
     "react-native": "0.73.6",
     "react-native-popup-menu": "^0.16.1",
     "react-native-web": "~0.19.6",
+    "remote-web-worker": "^0.0.9",
     "vscode-jsonrpc": "^8.2.1",
     "vscode-languageserver-protocol": "^3.17.5",
-    "vscode-languageserver-types": "^3.17.5",
-    "@expo/metro-runtime": "~3.1.3"
+    "vscode-languageserver-types": "^3.17.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.14",
-    "esbuild": "^0.23.0",
+    "package-json": "^10.0.1",
     "shx": "^0.3.4",
     "typescript": "^5.1.3"
   },

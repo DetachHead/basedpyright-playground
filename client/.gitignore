@@ -10,6 +10,3 @@ dist/
 
 # TypeScript
 *.tsbuildinfo
-
-# compiled worker
-public/worker.js
