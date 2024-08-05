@@ -207,14 +207,10 @@ async function handleHoverRequest(
     if (!lspClient) {
         return null;
     }
-
     try {
-        const hoverInfo = await lspClient.connection.sendRequest(HoverRequest.type, {
-            textDocument: {uri: model.uri.toString()},
-            position: {
-                line: position.lineNumber - 1,
-                character: position.column - 1
-            }
+        const hoverInfo = await lspClient.getHoverInfo(model.getValue(), {
+            line: position.lineNumber - 1,
+            character: position.column - 1,
         });
 
         return {

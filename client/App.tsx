@@ -131,7 +131,7 @@ export default function App() {
     }, [appState.code, appState.settings]);
 
     useEffect(() => {
-        lspClient.initialize(appState.settings);
+        lspClient.updateSettings(appState.settings);
     }, [appState.settings]);
     
     function onShowRightPanel(rightPanelType?: RightPanelType) {
@@ -160,7 +160,7 @@ export default function App() {
                         diagnostics={appState.diagnostics}
                         onUpdateCode={(code: string) => {
                             // Tell the LSP client about the code change.
-                            lspClient.getDiagnostics(code)
+                            lspClient.updateTextDocument(code)
                             lspClient.updateCode(code)
                             setAppState((prevState) => {
                                 return { ...prevState, code, isProblemsPanelDisplayed: true };

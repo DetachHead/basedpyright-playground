@@ -57,7 +57,7 @@ const documentUri = rootUri + fileName
 const workerScriptName = "worker.js";
 
 export class LspClient {
-    public connection: MessageConnection;
+    public connection: MessageConnection | undefined;
     public onNotification: (diagnostics:  Diagnostic[]) => void
     private _documentVersion = 1;
     private _documentText = '';
@@ -65,6 +65,13 @@ export class LspClient {
     private _pendingDiagRequests = new Map<number, DiagnosticRequest[]>();
 
     constructor() {
+    }
+
+    public updateCode = (code: string) => [
+        this._documentText = code
+    ]
+
+    public async initialize(sessionOptions?: SessionOptions) {
         const workerScript = `./${workerScriptName}`;
         const foreground = new Worker(workerScript, {
             name: 'Pyright-foreground',
@@ -85,24 +92,24 @@ export class LspClient {
         let backgroundWorkerCount = 0;
         foreground.addEventListener("message", (e: MessageEvent) => {
             if (e.data && e.data.type === "browser/newWorker") {
-            // Create a new background worker.
-            // The foreground worker has created a message channel and passed us
-            // a port. We create the background worker and pass transfer the port
-            // onward.
-            const { initialData, port } = e.data;
-            const background = new Worker(workerScript, {
-                name: `Pyright-background-${++backgroundWorkerCount}`,
-            });
-            workers.push(background);
-            background.postMessage(
-                {
-                type: "browser/boot",
-                mode: "background",
-                initialData,
-                port,
-                },
-                [port]
-            );
+                // Create a new background worker.
+                // The foreground worker has created a message channel and passed us
+                // a port. We create the background worker and pass transfer the port
+                // onward.
+                const { initialData, port } = e.data;
+                const background = new Worker(workerScript, {
+                    name: `Pyright-background-${++backgroundWorkerCount}`,
+                });
+                workers.push(background);
+                background.postMessage(
+                    {
+                        type: "browser/boot",
+                        mode: "background",
+                        initialData,
+                        port,
+                    },
+                    [port]
+                );
             }
         });
 
@@ -110,13 +117,7 @@ export class LspClient {
         this.connection = connection
 
         this.connection.listen();
-    }
 
-    public updateCode = (code: string) => [
-        this._documentText = code
-    ]
-
-    public async initialize(sessionOptions?: SessionOptions) {
         // Initialize the server.
         const init: InitializeParams = {
             rootUri,
@@ -209,43 +210,9 @@ export class LspClient {
         );
     }
 
-    async getDiagnostics(code: string): Promise<Diagnostic[]> {
-        const codeChanged = this._documentText !== code;
-
-        // If the code hasn't changed since the last time we received
-        // a code update, return the cached diagnostics.
-        if (!codeChanged && this._documentDiags) {
-            return this._documentDiags.diagnostics;
-        }
-
-        // The diagnostics will come back asynchronously, so
-        // return a promise.
-        return new Promise<Diagnostic[]>(async (resolve, reject) => {
-            let documentVersion = this._documentVersion;
-
-            if (codeChanged) {
-                documentVersion = await this.updateTextDocument(code);
-            }
-
-            // Queue a request for diagnostics.
-            let requestList = this._pendingDiagRequests.get(documentVersion);
-            if (!requestList) {
-                requestList = [];
-                this._pendingDiagRequests.set(documentVersion, requestList);
-            }
-
-            requestList.push({
-                callback: (diagnostics, err) => {
-                    if (err) {
-                        reject(err);
-                        return;
-                    }
-
-                    console.info(`Diagnostic callback ${JSON.stringify(diagnostics)}}`);
-                    resolve(diagnostics);
-                },
-            });
-        });
+    updateSettings = async (sessionOptions: SessionOptions) => {
+        this.connection?.dispose()
+        await this.initialize(sessionOptions)
     }
 
     async getHoverInfo(code: string, position: Position): Promise<Hover | null> {
@@ -361,7 +328,7 @@ export class LspClient {
 
     // Sends a new version of the text document to the language server.
     // It bumps the document version and returns the new version number.
-    private async updateTextDocument(code: string): Promise<number> {
+    async updateTextDocument(code: string): Promise<number> {
         let documentVersion = ++this._documentVersion;
         this._documentText = code;
 
