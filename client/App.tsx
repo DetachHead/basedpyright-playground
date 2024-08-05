@@ -15,6 +15,7 @@ import { PlaygroundSettings } from './PlaygroundSettings';
 import { ProblemsPanel } from './ProblemsPanel';
 import { RightPanel, RightPanelType } from './RightPanel';
 import { getStateFromUrl, updateUrlFromState } from './UrlUtils';
+import { getPyrightVersions } from './sessionManager'
 
 const lspClient = new LspClient();
 
@@ -52,7 +53,6 @@ export default function App() {
         rightPanelType: RightPanelType.Settings,
         isProblemsPanelDisplayed: initialState.code !== '',
         isWaitingForResponse: false,
-        supportedPyrightVersions: ['1.15.0'] // TODO
     });
 
 
@@ -85,29 +85,55 @@ export default function App() {
                     requestedPyrightVersion: true,
                 };
             });
-        //TODO
-        //     LspSession.getPyrightServiceStatus()
-        //         .then((status) => {
-        //             const pyrightVersions = status.pyrightVersions;
-
-        //             setAppState((prevState) => {
-        //                 return {
-        //                     ...prevState,
-        //                     latestPyrightVersion:
-        //                         pyrightVersions.length > 0 ? pyrightVersions[0] : undefined,
-        //                     supportedPyrightVersions: pyrightVersions,
-        //                 };
-        //             });
-        //         })
-        //         .catch((err) => {
-        //             // Ignore errors here.
-        //         });
+            getPyrightVersions()
+                .then((pyrightVersions) => {
+                    setAppState((prevState) => {
+                        return {
+                            ...prevState,
+                            latestPyrightVersion: pyrightVersions.length > 0 ? pyrightVersions[0] : undefined,
+                            supportedPyrightVersions: pyrightVersions,
+                        };
+                    });
+                })
+                .catch((err) => {
+                    // Ignore errors here.
+                });
         }
-        lspClient.onNotification = (diagnostics) => setAppState((prevState) => {
-            return {
-                ...prevState,
-                diagnostics,
-            };
+        
+        lspClient.requestNotification({
+            onDiagnostics: (diagnostics: Diagnostic[]) => {
+                setAppState((prevState) => {
+                    return {
+                        ...prevState,
+                        diagnostics,
+                    };
+                });
+            },
+            onError: (message: string) => {
+                setAppState((prevState) => {
+                    return {
+                        ...prevState,
+                        diagnostics: [
+                            {
+                                message: `An error occurred when attempting to contact the pyright web service\n    ${message}`,
+                                severity: DiagnosticSeverity.Error,
+                                range: {
+                                    start: { line: 0, character: 0 },
+                                    end: { line: 0, character: 0 },
+                                },
+                            },
+                        ],
+                    };
+                });
+            },
+            onWaitingForInitialization: (isWaiting) => {
+                setAppState((prevState) => {
+                    return {
+                        ...prevState,
+                        isWaitingForResponse: isWaiting,
+                    };
+                });
+            },
         });
     });
 
