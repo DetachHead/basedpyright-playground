@@ -15,7 +15,8 @@ import { PlaygroundSettings } from './PlaygroundSettings';
 import { ProblemsPanel } from './ProblemsPanel';
 import { RightPanel, RightPanelType } from './RightPanel';
 import { getStateFromUrl, updateUrlFromState } from './UrlUtils';
-import { PublishDiagnosticsNotification } from 'vscode-languageserver-protocol';
+
+const lspClient = new LspClient();
 
 export interface AppState {
     gotInitialState: boolean;
@@ -54,15 +55,6 @@ export default function App() {
         supportedPyrightVersions: ['1.15.0'] // TODO
     });
 
-    const lspClient = new LspClient((diagnostics) => {
-        setAppState((prevState) => {
-            return {
-                ...prevState,
-                diagnostics,
-            };
-        });
-    });
-    
 
     useEffect(() => {
         if (!appState.gotInitialState) {
@@ -111,6 +103,12 @@ export default function App() {
         //             // Ignore errors here.
         //         });
         }
+        lspClient.onNotification = (diagnostics) => setAppState((prevState) => {
+            return {
+                ...prevState,
+                diagnostics,
+            };
+        });
     });
 
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -162,8 +160,8 @@ export default function App() {
                         diagnostics={appState.diagnostics}
                         onUpdateCode={(code: string) => {
                             // Tell the LSP client about the code change.
-                            lspClient.updateCode(code);
-
+                            lspClient.getDiagnostics(code)
+                            lspClient.updateCode(code)
                             setAppState((prevState) => {
                                 return { ...prevState, code, isProblemsPanelDisplayed: true };
                             });

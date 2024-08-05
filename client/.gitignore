@@ -11,3 +11,6 @@ web-build/
 
 # TypeScript
 *.tsbuildinfo
+
+# compiled worker
+web/worker.js

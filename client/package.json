@@ -6,12 +6,12 @@
         "start": "npm run build:worker && expo start",
         "web": "npm run start -- --web",
         "build:worker": "esbuild --bundle worker.ts --outdir=web",
-        "build:web": "npm run build:worker && tsc && expo export:web && shx rm -rf ../server/dist/webapp && shx mkdir -p ../server/dist/webapp && shx cp -r ./web-build/* ../server/dist/webapp/"
+        "build": "npm run build:worker && tsc && expo export:web"
     },
     "dependencies": {
         "@ant-design/icons": "^5.2.6",
         "@monaco-editor/react": "^4.6.0",
-        "browser-basedpyright": "^1.14.0-047da5de6154ece025c4d52e72b71ecd9ff074e4",
+        "browser-basedpyright": "1.14.0-d2eef15ca0db199d5e8135d419f3c5d326696696",
         "expo": "~49.0.15",
         "expo-status-bar": "~1.6.0",
         "lz-string": "^1.5.0",

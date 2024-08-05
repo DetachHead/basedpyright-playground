@@ -1,6 +1,4 @@
 node_modules
 .expo
 .build
-server/.env
-server/dist
-server/pyright_local
+web/worker.js
