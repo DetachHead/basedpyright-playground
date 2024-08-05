@@ -5,7 +5,7 @@
 
 import { IconDefinition } from '@ant-design/icons-svg/lib/types';
 import React, { ForwardedRef, forwardRef, useImperativeHandle, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import {
     MenuOption,
     MenuOptions,
@@ -160,10 +160,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderRadius: 4,
-        cursor: 'pointer',
+        ...Platform.select({ web: {
+            cursor: 'default',
+        }})
     },
     disabled: {
-        cursor: 'default',
+        ...Platform.select({ web: {
+            cursor: 'default',
+        }}),
         opacity: 0.5,
     },
     iconContainer: {

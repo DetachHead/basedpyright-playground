@@ -4,7 +4,6 @@ node_modules/
 # Expo
 .expo/
 dist/
-web-build/
 
 # Local env files
 .env*.local
@@ -13,4 +12,4 @@ web-build/
 *.tsbuildinfo
 
 # compiled worker
-web/worker.js
+public/worker.js

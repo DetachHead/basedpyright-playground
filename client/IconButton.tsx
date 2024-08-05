@@ -4,7 +4,7 @@
  */
 
 import { IconDefinition } from '@ant-design/icons-svg/lib/types';
-import { GestureResponderEvent, Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { GestureResponderEvent, Platform, Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import { useHover } from './HoverHook';
 import { SvgIcon } from './SvgIcon';
 
@@ -63,6 +63,8 @@ const styles = StyleSheet.create({
     },
     disabled: {
         opacity: 1,
-        cursor: 'default',
+        ...Platform.select({ web: {
+            cursor: 'default',
+        }})
     },
 });
