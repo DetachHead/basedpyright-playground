@@ -138,7 +138,7 @@ export class LspClient {
                 }
             },
             initializationOptions: {
-                files: {[rootPath + fileName]: this._documentText, [rootPath+'pyrightconfig.json']: JSON.stringify({typeshedPath: '/typeshed'})}
+                files: {[rootPath + fileName]: this._documentText, [rootPath+'pyrightconfig.json']: JSON.stringify({typeshedPath: '/typeshed', ...sessionOptions, ...sessionOptions.configOverrides})}
             }
         };
 
