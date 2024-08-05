@@ -69,7 +69,7 @@ export function ProblemsPanel(props: ProblemsPanelProps) {
                             {props.displayActivityIndicator ? (
                                 <View style={styles.activityContainer}>
                                     <Text style={styles.waitingText} selectable={false}>
-                                        Waiting for server
+                                        Waiting for worker
                                     </Text>
                                     <ActivityIndicator size={12} color="#fff" />
                                 </View>
