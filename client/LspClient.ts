@@ -65,7 +65,7 @@ export class LspClient {
     private _pendingDiagRequests = new Map<number, DiagnosticRequest[]>();
 
     constructor() {
-        const workerScript = `/${workerScriptName}`;
+        const workerScript = `./${workerScriptName}`;
         const foreground = new Worker(workerScript, {
             name: 'Pyright-foreground',
         });
