@@ -4,7 +4,6 @@
  * information with a language server.
  */
 
-import { ChildProcess } from 'node:child_process';
 import {
     BrowserMessageReader,
     BrowserMessageWriter,
@@ -46,20 +45,26 @@ import { SessionOptions } from './LspSession';
 interface DiagnosticRequest {
     callback: (diags: Diagnostic[], error?: Error) => void;
 }
+
+const rootPath = '/src/'
+
+const rootUri = `file://${rootPath}`
+
 const fileName = 'Untitled.py'
 
-const documentUri = `file:///${fileName}`;
+const documentUri = rootUri + fileName
 
 const workerScriptName = "worker.js";
 
 export class LspClient {
     public connection: MessageConnection;
+    public onNotification: (diagnostics:  Diagnostic[]) => void
     private _documentVersion = 1;
     private _documentText = '';
     private _documentDiags: PublishDiagnosticsParams | undefined;
     private _pendingDiagRequests = new Map<number, DiagnosticRequest[]>();
 
-    constructor(private _diagnosticsCallback: (diagnostics: Diagnostic[]) => void) {
+    constructor() {
         const workerScript = `/${workerScriptName}`;
         const foreground = new Worker(workerScript, {
             name: 'Pyright-foreground',
@@ -114,8 +119,8 @@ export class LspClient {
     public async initialize(sessionOptions?: SessionOptions) {
         // Initialize the server.
         const init: InitializeParams = {
-            rootUri: documentUri,
-            rootPath: fileName,
+            rootUri,
+            rootPath,
             processId: 1,
             capabilities: {
                 textDocument: {
@@ -129,10 +134,10 @@ export class LspClient {
                         contentFormat: ['markdown', 'plaintext'],
                     },
                     signatureHelp: {},
-                },
+                }
             },
             initializationOptions: {
-                files: {[fileName]: this._documentText}
+                files: {[rootPath + fileName]: this._documentText, [rootPath+'pyrightconfig.json']: JSON.stringify({typeshedPath: '/typeshed'})}
             }
         };
 
@@ -182,7 +187,7 @@ export class LspClient {
                 // Resolve any pending diagnostic requests.
                 const pendingRequests = this._pendingDiagRequests.get(diagVersion) ?? [];
                 this._pendingDiagRequests.delete(diagVersion);
-                this._diagnosticsCallback(diagInfo.diagnostics)
+                this.onNotification(diagInfo.diagnostics)
             }
         );
 
