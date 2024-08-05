@@ -123,7 +123,7 @@ export function SettingsPanel(props: SettingsPanelProps) {
             </View>
 
             <SettingsDivider />
-            <SettingsHeader headerText={'Pyright Version'} />
+            <SettingsHeader headerText={'BasedPyright Version'} />
             <View style={styles.selectionContainer}>
                 <Text style={styles.selectedOptionText} selectable={false}>
                     {props.settings.pyrightVersion ||
