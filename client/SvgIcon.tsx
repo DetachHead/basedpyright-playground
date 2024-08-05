@@ -5,7 +5,7 @@
 
 import { renderIconDefinitionToSVGElement } from '@ant-design/icons-svg/es/helpers';
 import { IconDefinition } from '@ant-design/icons-svg/lib/types';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 export interface SvgIconProps {
     iconDefinition: IconDefinition;
@@ -52,6 +52,8 @@ const styles = StyleSheet.create({
     },
     disabled: {
         opacity: 1,
-        cursor: 'default',
+        ...Platform.select({ web: {
+            cursor: 'default',
+        }})
     },
 });
