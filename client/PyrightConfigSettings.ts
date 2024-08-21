@@ -609,6 +609,12 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStandard: false,
         isEnabledInStrict: false,
     },
+    {
+        name: 'reportUnusedParameter',
+        description: "Controls reporting of unused function parameters",
+        isEnabledInStandard: false,
+        isEnabledInStrict: false,
+    },
 ];
 
 export const configSettingsAlphabetized = configSettings.sort((a, b) => {
