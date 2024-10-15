@@ -1,4 +1,4 @@
 node_modules
 .expo
-.build
+build
 web/worker.js
