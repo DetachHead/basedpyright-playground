@@ -621,6 +621,12 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStandard: false,
         isEnabledInStrict: false,
     },
+    {
+        name: 'reportUnannotatedClassAttribute',
+        description: "Diagnostics for class variable declarations that do not have a type annotation, which is required due to performance reasons for strict validation of subclasses",
+        isEnabledInStandard: false,
+        isEnabledInStrict: false,
+    },
 ];
 
 export const configSettingsAlphabetized = configSettings.sort((a, b) => {
