@@ -520,6 +520,7 @@ export const configSettings: PyrightConfigSetting[] = [
             'Enable the use of experimental features that are not part of the Python typing spec',
         isEnabledInStandard: false,
         isEnabledInStrict: false,
+        isEnabeldInAll: false,
     },
     {
         name: 'reportCallInDefaultInitializer',
