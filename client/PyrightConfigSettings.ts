@@ -593,6 +593,12 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStrict: false,
     },
     {
+        name: 'reportExplicitAny',
+        description: 'Controls reporting of explicit usage of the `Any` type',
+        isEnabledInStandard: false,
+        isEnabledInStrict: false,
+    },
+    {
         name: 'reportIgnoreCommentWithoutRule',
         description: 'Controls reporting `# type: ignore` and `# pyright: ignore` comments without specifying a rule',
         isEnabledInStandard: false,
