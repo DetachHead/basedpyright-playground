@@ -63,6 +63,12 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStrict: true,
     },
     {
+        name: 'strictGenericNarrowing',
+        description: 'Use the bounds of TypeVars when narrowing with isinstance checks instead of `Any`',
+        isEnabledInStandard: false,
+        isEnabledInStrict: false,
+    },
+    {
         name: 'reportMissingModuleSource',
         description: 'Controls reporting of imports that cannot be resolved to source files',
         isEnabledInStandard: true,
