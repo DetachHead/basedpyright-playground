@@ -112,7 +112,7 @@ export function getStateFromUrl(): PlaygroundState | undefined {
 
             default: {
                 if (configSettingsMap.has(key)) {
-                    state.settings.configOverrides[key] = Boolean(value);
+                    state.settings.configOverrides[key] = value !== 'false';
                 }
             }
         }
