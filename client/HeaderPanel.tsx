@@ -31,7 +31,7 @@ export function HeaderPanel(props: HeaderPanelProps) {
         <View style={styles.container}>
             <Pressable
                 onPress={() => {
-                    Linking.openURL('https://github.com/detachhead/basedpyright/');
+                    Linking.openURL('https://docs.basedpyright.com');
                 }}
             >
                 {image}
