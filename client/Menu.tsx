@@ -16,7 +16,7 @@ import {
 import { useHover } from './HoverHook';
 import { SvgIcon } from './SvgIcon';
 
-export const menuIconColor = '#669';
+export const menuIconColor = '#ffaa00';
 export const panelTextColor = '#222';
 export const focusedMenuItemBackgroundColor = '#eee';
 

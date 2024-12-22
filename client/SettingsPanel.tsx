@@ -276,8 +276,8 @@ function MenuButton(props: { onPress: () => void }) {
         <IconButton
             iconDefinition={icons.DownCircleOutlined}
             iconSize={18}
-            color="#669"
-            hoverColor="#336"
+            color="#ffaa00"
+            hoverColor="#000"
             onPress={props.onPress}
         />
     );

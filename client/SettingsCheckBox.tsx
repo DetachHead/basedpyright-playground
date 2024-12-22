@@ -40,7 +40,7 @@ export function SettingsCheckbox(props: SettingsCheckboxProps) {
                     <SvgIcon
                         iconDefinition={icons.CheckOutlined}
                         iconSize={12}
-                        color={props.disabled ? '#aaa' : '#669'}
+                        color={props.disabled ? '#aaa' : '#ffaa00'}
                     />
                 ) : undefined}
             </View>

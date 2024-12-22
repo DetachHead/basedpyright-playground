@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     header: {
         height: 32,
         paddingHorizontal: 8,
-        backgroundColor: '#336',
+        backgroundColor: '#000',
         flexDirection: 'row',
         alignSelf: 'stretch',
         alignItems: 'center',

@@ -49,7 +49,7 @@ export function HeaderPanel(props: HeaderPanelProps) {
                     }
                     color={'#fff'}
                     hoverColor={'#eee'}
-                    disableColor={'#669'}
+                    disableColor={'#ffaa00'}
                     title={'Playground settings'}
                     onPress={() => {
                         props.onShowRightPanel(RightPanelType.Settings);
@@ -63,7 +63,7 @@ export function HeaderPanel(props: HeaderPanelProps) {
                     }
                     color={'#fff'}
                     hoverColor={'#eee'}
-                    disableColor={'#669'}
+                    disableColor={'#ffaa00'}
                     title={'About BasedPyright Playground'}
                     onPress={() => {
                         props.onShowRightPanel(RightPanelType.About);
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         paddingBottom: 2,
         alignSelf: 'stretch',
         alignItems: 'center',
-        backgroundColor: '#336',
+        backgroundColor: '#000',
         height: 42,
     },
     pyrightIcon: {

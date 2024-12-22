@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         borderRadius: 4,
         borderWidth: 1,
-        borderColor: '#669',
+        borderColor: '#ffaa00',
     },
     defaultBackground: {
         backgroundColor: '#f8f8ff',

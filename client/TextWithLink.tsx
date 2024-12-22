@@ -35,7 +35,7 @@ export default function TextWithLink(props: TextWithLinkProps) {
 
 const styles = StyleSheet.create({
     default: {
-        color: '#558',
+        color: '#ffaa00',
     },
     defaultHover: {
         color: '#333',
