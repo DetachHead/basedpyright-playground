@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     container: {
         width: rightPanelWidth,
         alignSelf: 'stretch',
-        backgroundColor: '#f8f8ff',
+        backgroundColor: '#f8f8f8',
     },
     contentContainer: {
         flexGrow: 1,

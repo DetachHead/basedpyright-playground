@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         borderColor: '#ffaa00',
     },
     defaultBackground: {
-        backgroundColor: '#f8f8ff',
+        backgroundColor: '#f8f8f8',
     },
     defaultHoverBackground: {
         backgroundColor: '#fff',
