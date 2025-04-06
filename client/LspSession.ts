@@ -5,9 +5,6 @@
  * performance reasons.
  */
 
-import { LspClient } from './LspClient';
-
-export type SessionId = string;
 
 export interface SessionOptions {
     pythonVersion?: string;
@@ -16,21 +13,4 @@ export interface SessionOptions {
     typeCheckingMode?: string;
     configOverrides?: { [name: string]: boolean };
     locale?: string;
-}
-
-export interface Session {
-    // A unique ID for this session.
-    readonly id: SessionId;
-
-    // Path to temp directory that contains the "project" for this session.
-    tempDirPath: string;
-
-    // Proxy language client that interacts with the server.
-    langClient?: LspClient;
-
-    // Timestamp of last request to the session.
-    lastAccessTime: number;
-
-    // Options associated with the session.
-    options?: SessionOptions;
 }
