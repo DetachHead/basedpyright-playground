@@ -41,6 +41,10 @@ import {
     SemanticTokensParams,
     SemanticTokensRequest,
     SemanticTokens,
+    InlayHintParams,
+    InlayHintRequest,
+    InlayHint,
+    Range
 } from 'vscode-languageserver-protocol';
 import { SessionOptions } from './LspSession';
 import { getPyrightVersions, packageName } from './sessionManager'
@@ -328,14 +332,27 @@ export class LspClient {
                 uri: documentUri,
             },
         };
-        const result = await this.connection
-            .sendRequest(SemanticTokensRequest.type,params)
-            .catch((err) => {
-                // Don't return an error. Just return null (no info).
-                return null;
-            });
+        try {
+            return await this.connection.sendRequest(SemanticTokensRequest.type, params)
+        } catch (e) {
+            // Don't return an error. Just return null (no info).
+            return null
+        }
 
-        return result;
+    }
+    async getInlayHints(range: Range): Promise<InlayHint[] | null> {
+        const params: InlayHintParams = {
+            textDocument: {
+                uri: documentUri,
+            },
+            range
+        };
+        try {
+            return await this.connection.sendRequest(InlayHintRequest.type, params)
+        } catch (e) {
+            // Don't return an error. Just return null (no info).
+            return null
+        }
     }
 
     // Sends a new version of the text document to the language server.

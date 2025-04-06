@@ -20,7 +20,9 @@ import {
     TextDocumentEdit,
 } from 'vscode-languageserver-types';
 import { LspClient } from './LspClient';
-import { HoverRequest } from 'vscode-languageserver-protocol';
+import { fromRange, toInlayHint, toRange, toSemanticTokens } from 'monaco-languageserver-types'
+
+// TODO: use monaco-languageserver-types for more conversaions. currently only used for inlay hints and semantic tokens
 
 loader
     .init()
@@ -43,6 +45,21 @@ loader
         monaco.languages.registerDocumentSemanticTokensProvider('python', 
             handleSemanticTokensRequest()
         )
+        monaco.languages.registerInlayHintsProvider('python', {
+            provideInlayHints: async (model, range) => {
+                const lspClient = getLspClientForModel(model);
+                if (!lspClient) {
+                    return null;
+                }
+                try {
+                    const inlayHints = await lspClient.getInlayHints(fromRange(range));
+                    return {hints: inlayHints.map(inlayHint => toInlayHint(inlayHint)), dispose: () => {}}
+                } catch (error) {
+                    console.error('Failed to get inlay hints:', error);
+                    return null;
+                }
+            }
+        })
     })
     .catch((error) => console.error('An error occurred during initialization of Monaco: ', error));
 
@@ -67,7 +84,7 @@ const options: monaco.editor.IStandaloneEditorConstructionOptions = {
         indentation: false,
     },
     renderLineHighlight: 'none',
-    'semanticHighlighting.enabled': true
+    'semanticHighlighting.enabled': true,
 };
 
 interface RegisteredModel {
@@ -117,7 +134,7 @@ export const MonacoEditor = forwardRef(function MonacoEditor(
             selectRange: (range: Range) => {
                 const editor: monaco.editor.IStandaloneCodeEditor = editorRef.current;
                 if (editor) {
-                    const monacoRange = convertRange(range);
+                    const monacoRange = toRange(range);
                     editor.setSelection(monacoRange);
                     editor.revealLineInCenterIfOutsideViewport(monacoRange.startLineNumber);
                 }
@@ -163,7 +180,7 @@ function setFileMarkers(
 
     diagnostics.forEach((diag) => {
         const markerData: monaco.editor.IMarkerData = {
-            ...convertRange(diag.range),
+            ...toRange(diag.range),
             severity: convertSeverity(diag.severity),
             message: diag.message,
         };
@@ -194,15 +211,6 @@ function convertSeverity(severity: DiagnosticSeverity): monaco.MarkerSeverity {
     }
 }
 
-function convertRange(range: Range): monaco.IRange {
-    return {
-        startLineNumber: range.start.line + 1,
-        startColumn: range.start.character + 1,
-        endLineNumber: range.end.line + 1,
-        endColumn: range.end.character + 1,
-    };
-}
-
 async function handleHoverRequest(
     model: monaco.editor.ITextModel,
     position: monaco.Position
@@ -223,7 +231,7 @@ async function handleHoverRequest(
                     value: (hoverInfo.contents as MarkupContent).value,
                 },
             ],
-            range: convertRange(hoverInfo.range),
+            range: toRange(hoverInfo.range),
         };
     } catch (err) {
         return null;
@@ -259,10 +267,7 @@ const handleSemanticTokensRequest = () => ({
         }
         try {
             const tokens = await lspClient.getSemanticTokens();
-            return {
-                data: new Uint32Array(tokens.data),
-                resultId: tokens.resultId
-            };
+            return toSemanticTokens(tokens)
         } catch (error) {
             console.error('Failed to get semantic tokens:', error);
             return null;
@@ -301,7 +306,7 @@ async function handleRenameRequest(
                             resource: model.uri,
                             versionId: undefined,
                             textEdit: {
-                                range: convertRange(textEdit.range),
+                                range: toRange(textEdit.range),
                                 text: textEdit.newText,
                             },
                         });
@@ -421,18 +426,18 @@ function convertCompletionItem(
         converted.insertText = item.textEdit.newText;
         if (InsertReplaceEdit.is(item.textEdit)) {
             converted.range = {
-                insert: convertRange(item.textEdit.insert),
-                replace: convertRange(item.textEdit.replace),
+                insert: toRange(item.textEdit.insert),
+                replace: toRange(item.textEdit.replace),
             };
         } else {
-            converted.range = convertRange(item.textEdit.range);
+            converted.range = toRange(item.textEdit.range);
         }
     }
 
     if (item.additionalTextEdits) {
         converted.additionalTextEdits = item.additionalTextEdits.map((edit) => {
             return {
-                range: convertRange(edit.range),
+                range: toRange(edit.range),
                 text: edit.newText,
             };
         });
