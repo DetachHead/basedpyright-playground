@@ -1,9 +1,7 @@
-name: Deploy static content to Pages
+name: ci
 
 on:
   push:
-    branches: ["main"]
-
   workflow_dispatch:
 
 permissions:
@@ -16,7 +14,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - name: install npm dependencies
+        run: npm ci
+        working-directory: client
+      - name: typecheck
+        run: tsc
+        working-directory: client
   deploy:
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
