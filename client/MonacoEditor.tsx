@@ -24,45 +24,6 @@ import { fromRange, toInlayHint, toRange, toSemanticTokens } from 'monaco-langua
 
 // TODO: use monaco-languageserver-types for more conversaions. currently only used for inlay hints and semantic tokens
 
-loader
-    .init()
-    .then((monaco) => {
-        monaco.languages.registerHoverProvider('python', {
-            provideHover: handleHoverRequest,
-        });
-        monaco.languages.registerSignatureHelpProvider('python', {
-            provideSignatureHelp: handleSignatureHelpRequest,
-            signatureHelpTriggerCharacters: ['(', ','],
-        });
-        monaco.languages.registerCompletionItemProvider('python', {
-            provideCompletionItems: handleProvideCompletionRequest,
-            resolveCompletionItem: handleResolveCompletionRequest,
-            triggerCharacters: ['.', '[', '"', "'"],
-        });
-        monaco.languages.registerRenameProvider('python', {
-            provideRenameEdits: handleRenameRequest,
-        });
-        monaco.languages.registerDocumentSemanticTokensProvider('python', 
-            handleSemanticTokensRequest()
-        )
-        monaco.languages.registerInlayHintsProvider('python', {
-            provideInlayHints: async (model, range) => {
-                const lspClient = getLspClientForModel(model);
-                if (!lspClient) {
-                    return null;
-                }
-                try {
-                    const inlayHints = await lspClient.getInlayHints(fromRange(range));
-                    return {hints: inlayHints.map(inlayHint => toInlayHint(inlayHint)), dispose: () => {}}
-                } catch (error) {
-                    console.error('Failed to get inlay hints:', error);
-                    return null;
-                }
-            }
-        })
-    })
-    .catch((error) => console.error('An error occurred during initialization of Monaco: ', error));
-
 const options: monaco.editor.IStandaloneEditorConstructionOptions = {
     selectOnLineNumbers: true,
     minimap: { enabled: false },
@@ -150,6 +111,42 @@ export const MonacoEditor = forwardRef(function MonacoEditor(
             // Register the editor and the LSP Client so they can be accessed
             // by the hover provider, etc.
             registerModel(model, props.lspClient);
+        } else {
+            loader
+                .init()
+                .then((monaco) => {
+                    monaco.languages.registerHoverProvider('python', {
+                        provideHover: handleHoverRequest,
+                    });
+                    monaco.languages.registerSignatureHelpProvider('python', {
+                        provideSignatureHelp: handleSignatureHelpRequest,
+                        signatureHelpTriggerCharacters: ['(', ','],
+                    });
+                    monaco.languages.registerCompletionItemProvider('python', {
+                        provideCompletionItems: handleProvideCompletionRequest,
+                        resolveCompletionItem: handleResolveCompletionRequest,
+                        triggerCharacters: ['.', '[', '"', "'"],
+                    });
+                    monaco.languages.registerRenameProvider('python', {
+                        provideRenameEdits: handleRenameRequest,
+                    });
+                    monaco.languages.registerDocumentSemanticTokensProvider('python', 
+                        handleSemanticTokensRequest()
+                    )
+                    monaco.languages.registerInlayHintsProvider('python', {
+                        provideInlayHints: async (_, range) => {
+                            const lspClient = props.lspClient
+                            try {
+                                const inlayHints = await lspClient.getInlayHints(fromRange(range));
+                                return {hints: inlayHints.map(inlayHint => toInlayHint(inlayHint)), dispose: () => {}}
+                            } catch (error) {
+                                console.error('Failed to get inlay hints:', error);
+                                return null;
+                            }
+                        }
+                    })
+                })
+                .catch((error) => console.error('An error occurred during initialization of Monaco: ', error));
         }
     }, [props.diagnostics]);
 
