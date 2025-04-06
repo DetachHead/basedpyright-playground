@@ -38,6 +38,9 @@ import {
     SignatureHelpParams,
     SignatureHelpRequest,
     WorkspaceEdit,
+    SemanticTokensParams,
+    SemanticTokensRequest,
+    SemanticTokens,
 } from 'vscode-languageserver-protocol';
 import { SessionOptions } from './LspSession';
 import { getPyrightVersions, packageName } from './sessionManager'
@@ -311,6 +314,22 @@ export class LspClient {
     async resolveCompletion(completionItem: CompletionItem): Promise<CompletionItem | null> {
         const result = await this.connection
             .sendRequest(CompletionResolveRequest.type, completionItem)
+            .catch((err) => {
+                // Don't return an error. Just return null (no info).
+                return null;
+            });
+
+        return result;
+    }
+    
+    async getSemanticTokens(): Promise<SemanticTokens | null> {
+        const params: SemanticTokensParams = {
+            textDocument: {
+                uri: documentUri,
+            },
+        };
+        const result = await this.connection
+            .sendRequest(SemanticTokensRequest.type,params)
             .catch((err) => {
                 // Don't return an error. Just return null (no info).
                 return null;

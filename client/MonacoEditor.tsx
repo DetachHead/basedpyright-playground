@@ -40,6 +40,9 @@ loader
         monaco.languages.registerRenameProvider('python', {
             provideRenameEdits: handleRenameRequest,
         });
+        monaco.languages.registerDocumentSemanticTokensProvider('python', 
+            handleSemanticTokensRequest()
+        )
     })
     .catch((error) => console.error('An error occurred during initialization of Monaco: ', error));
 
@@ -64,6 +67,7 @@ const options: monaco.editor.IStandaloneEditorConstructionOptions = {
         indentation: false,
     },
     renderLineHighlight: 'none',
+    'semanticHighlighting.enabled': true
 };
 
 interface RegisteredModel {
@@ -225,6 +229,47 @@ async function handleHoverRequest(
         return null;
     }
 }
+
+const handleSemanticTokensRequest = () => ({
+    getLegend: () => ({
+        tokenTypes: [
+            'variable',
+            'parameter',
+            'function',
+            'class',
+            'type',
+            'decorator',
+            'enum',
+            'interface',
+            'typeParameter',
+            'namespace'
+        ],
+        tokenModifiers: [
+            'definition',
+            'async',
+            'readonly',
+            'static',
+            'local'
+        ]
+    }),
+    provideDocumentSemanticTokens: async (model: monaco.editor.ITextModel) => {
+        const lspClient = getLspClientForModel(model);
+        if (!lspClient) {
+            return null;
+        }
+        try {
+            const tokens = await lspClient.getSemanticTokens();
+            return {
+                data: new Uint32Array(tokens.data),
+                resultId: tokens.resultId
+            };
+        } catch (error) {
+            console.error('Failed to get semantic tokens:', error);
+            return null;
+        }
+    },
+    releaseDocumentSemanticTokens: () => {}
+});
 
 async function handleRenameRequest(
     model: monaco.editor.ITextModel,
