@@ -131,7 +131,7 @@ export const MonacoEditor = forwardRef(function MonacoEditor(
                         provideRenameEdits: handleRenameRequest,
                     });
                     monaco.languages.registerDocumentSemanticTokensProvider('python', 
-                        handleSemanticTokensRequest()
+                        handleSemanticTokensRequest(props.lspClient)
                     )
                     monaco.languages.registerInlayHintsProvider('python', {
                         provideInlayHints: async (_, range) => {
@@ -235,7 +235,7 @@ async function handleHoverRequest(
     }
 }
 
-const handleSemanticTokensRequest = () => ({
+const handleSemanticTokensRequest = (lspClient: LspClient) => ({
     getLegend: () => ({
         tokenTypes: [
             'variable',
@@ -257,11 +257,7 @@ const handleSemanticTokensRequest = () => ({
             'local'
         ]
     }),
-    provideDocumentSemanticTokens: async (model: monaco.editor.ITextModel) => {
-        const lspClient = getLspClientForModel(model);
-        if (!lspClient) {
-            return null;
-        }
+    provideDocumentSemanticTokens: async () => {
         try {
             const tokens = await lspClient.getSemanticTokens();
             return toSemanticTokens(tokens)
