@@ -640,6 +640,12 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStandard: false,
         isEnabledInStrict: false,
     },
+    {
+        name: 'reportIncompatibleUnannotatedOverride',
+        description: "Diagnostics for overrides in subclasses that redefine a variable without a type annotation in an incompatible way",
+        isEnabledInStandard: false,
+        isEnabledInStrict: false,
+    },
 ];
 
 export const configSettingsAlphabetized = configSettings.sort((a, b) => {
