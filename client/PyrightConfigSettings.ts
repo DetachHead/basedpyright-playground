@@ -8,11 +8,11 @@ export interface PyrightConfigSetting {
     description: string;
     isEnabledInStandard: boolean;
     isEnabledInStrict: boolean;
-    
+
     /**
      * everything is enabled in `"all"` except discouraged rules (ideally they would be deprecated but we want
      * to remain backwards compatible with pyright).
-     * 
+     *
      * this is optional (defaults to `true` to minimize upstream conflicts)
      */
     isEnabeldInAll?: boolean
