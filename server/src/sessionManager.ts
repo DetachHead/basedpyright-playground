@@ -442,7 +442,6 @@ async function installPyright(requestedVersion: string | undefined): Promise<Ins
         if (fs.existsSync(dirName)) {
             logger.info(`Pyright version ${version} already installed`);
             recordPyrightVersionUse(version);
-            prunePyrightCache();
             resolve({ pyrightVersion: version, localDirectory: dirName });
             return;
         }
