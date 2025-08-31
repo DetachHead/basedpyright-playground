@@ -31,6 +31,23 @@ const maxSessionLifetime = 1 * 60 * 1000; // 1 minute
 // Maximum number of pyright versions to return to the caller.
 const maxPyrightVersionCount = 50;
 
+// Maximum number of pyright versions that will be cached locally.
+const maxCachedPyrightVersions = 20;
+
+// Directory where local copies of pyright are installed.
+const pyrightLocalDir = './pyright_local';
+
+// Path to a manifest file that tracks usage of cached pyright versions.
+const pyrightManifestPath = path.join(pyrightLocalDir, 'manifest.json');
+
+interface PyrightManifestEntry {
+    lastAccess: number;
+}
+
+type PyrightManifest = { [version: string]: PyrightManifestEntry };
+
+let pyrightManifest: PyrightManifest | undefined;
+
 // If the caller doesn't specify the pythonVersion or pythonPlatform,
 // default to these. Otherwise the language server will pick these
 // based on whatever version of Python happens to be installed in
@@ -47,6 +64,53 @@ let lastVersionRequestTime = 0;
 let lastVersion = '';
 
 const maxInactiveSessionCount = 64;
+
+function readPyrightManifest(): PyrightManifest {
+    if (!pyrightManifest) {
+        try {
+            const content = fs.readFileSync(pyrightManifestPath, { encoding: 'utf8' });
+            pyrightManifest = JSON.parse(content) as PyrightManifest;
+        } catch {
+            pyrightManifest = {};
+        }
+    }
+    return pyrightManifest;
+}
+
+function writePyrightManifest() {
+    fs.mkdirSync(pyrightLocalDir, { recursive: true });
+    fs.writeFileSync(pyrightManifestPath, JSON.stringify(pyrightManifest));
+}
+
+function recordPyrightVersionUse(version: string) {
+    const manifest = readPyrightManifest();
+    manifest[version] = { lastAccess: Date.now() };
+    writePyrightManifest();
+}
+
+function prunePyrightCache() {
+    const manifest = readPyrightManifest();
+    const versions = Object.keys(manifest);
+    if (versions.length <= maxCachedPyrightVersions) {
+        return;
+    }
+
+    const sorted = versions.sort((a, b) => manifest[a].lastAccess - manifest[b].lastAccess);
+    while (sorted.length > maxCachedPyrightVersions) {
+        const removeVersion = sorted.shift();
+        if (!removeVersion) {
+            break;
+        }
+        const dir = path.join(pyrightLocalDir, removeVersion);
+        try {
+            fs.rmSync(dir, { recursive: true, force: true });
+        } catch {
+            // ignore
+        }
+        delete manifest[removeVersion];
+    }
+    writePyrightManifest();
+}
 
 export function getSessionById(id: SessionId) {
     const session = activeSessions.get(id);
@@ -373,10 +437,12 @@ async function installPyright(requestedVersion: string | undefined): Promise<Ins
     }
 
     return new Promise<InstallPyrightInfo>((resolve, reject) => {
-        const dirName = `./pyright_local/${version}`;
+        const dirName = path.join(pyrightLocalDir, version);
 
         if (fs.existsSync(dirName)) {
             logger.info(`Pyright version ${version} already installed`);
+            recordPyrightVersionUse(version);
+            prunePyrightCache();
             resolve({ pyrightVersion: version, localDirectory: dirName });
             return;
         }
@@ -392,7 +458,8 @@ async function installPyright(requestedVersion: string | undefined): Promise<Ins
                 }
 
                 logger.info(`Install of pyright ${version} succeeded`);
-
+                recordPyrightVersionUse(version);
+                prunePyrightCache();
                 resolve({ pyrightVersion: version, localDirectory: dirName });
             }
         );
