@@ -112,6 +112,13 @@ const makeStyles = (colors: ThemeColors) => StyleSheet.create({
         alignSelf: 'stretch',
         backgroundColor: colors.surface,
     },
+    contentContainer: {
+        flexGrow: 1,
+        flexShrink: 0,
+        flexBasis: 0,
+        flexDirection: 'column',
+        alignSelf: 'stretch',
+    },
     headerContainer: {
         flexDirection: 'row',
         height: 36,
@@ -126,13 +133,6 @@ const makeStyles = (colors: ThemeColors) => StyleSheet.create({
         color: colors.text,
         fontSize: 14,
         fontWeight: 'bold',
-    },
-    contentContainer: {
-        flexGrow: 1,
-        flexShrink: 0,
-        flexBasis: 0,
-        flexDirection: 'column',
-        alignSelf: 'stretch',
     },
     headerControlsContainer: {
         flex: 1,

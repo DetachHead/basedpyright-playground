@@ -32,7 +32,6 @@ export interface SettingsPanelProps {
     onUpdateSettings: (settings: PlaygroundSettings) => void;
 }
 
-
 export function SettingsPanel(props: SettingsPanelProps) {
     const { colors } = useTheme();
     const typeCheckingModeMenuRef = useRef<MenuRef>(null);
