@@ -18,6 +18,7 @@ import {
     configSettingsAlphabetized,
 } from './PyrightConfigSettings';
 import { SettingsCheckbox } from './SettingsCheckBox';
+import { useTheme, ThemeColors } from './ThemeContext';
 
 interface ConfigOptionWithValue {
     name: string;
@@ -31,7 +32,9 @@ export interface SettingsPanelProps {
     onUpdateSettings: (settings: PlaygroundSettings) => void;
 }
 
+
 export function SettingsPanel(props: SettingsPanelProps) {
+    const { colors } = useTheme();
     const typeCheckingModeMenuRef = useRef<MenuRef>(null);
     const configOptionsMenuRef = useRef<MenuRef>(null);
     const pyrightVersionMenuRef = useRef<MenuRef>(null);
@@ -39,6 +42,7 @@ export function SettingsPanel(props: SettingsPanelProps) {
     const pythonPlatformMenuRef = useRef<MenuRef>(null);
     const localeMenuRef = useRef<MenuRef>(null);
     const configOverrides = getNonDefaultConfigOptions(props.settings);
+    const styles = makeStyles(colors);
 
     return (
         <View style={styles.container}>
@@ -272,18 +276,23 @@ export function SettingsPanel(props: SettingsPanelProps) {
 }
 
 function MenuButton(props: { onPress: () => void }) {
+    const { colors } = useTheme();
+
     return (
         <IconButton
             iconDefinition={icons.DownCircleOutlined}
             iconSize={18}
-            color="#ffaa00"
-            hoverColor="#000"
+            color={colors.accent}
+            hoverColor={colors.text}
             onPress={props.onPress}
         />
     );
 }
 
 function SettingsHeader(props: { headerText: string }) {
+    const { colors } = useTheme();
+    const styles = makeStyles(colors);
+
     return (
         <View style={styles.headerTextBox}>
             <Text style={styles.headerText} selectable={false}>
@@ -294,6 +303,9 @@ function SettingsHeader(props: { headerText: string }) {
 }
 
 function SettingsDivider() {
+    const { colors } = useTheme();
+    const styles = makeStyles(colors);
+
     return <View style={styles.divider} />;
 }
 
@@ -303,7 +315,9 @@ interface ConfigOverrideProps {
 }
 
 function ConfigOverride(props: ConfigOverrideProps) {
+    const { colors } = useTheme();
     const text = `${props.config.name}=${props.config.value.toString()}`;
+    const styles = makeStyles(colors);
 
     return (
         <View style={styles.configOverrideContainer}>
@@ -314,8 +328,8 @@ function ConfigOverride(props: ConfigOverrideProps) {
                 <IconButton
                     iconDefinition={icons.CloseOutlined}
                     iconSize={12}
-                    color="#666"
-                    hoverColor="#333"
+                    color={colors.textSecondary}
+                    hoverColor={colors.text}
                     onPress={props.onRemove}
                 />
             </View>
@@ -378,18 +392,19 @@ function toggleConfigOption(settings: PlaygroundSettings, optionName: string): P
     return { ...settings, configOverrides };
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
         alignSelf: 'stretch',
         paddingVertical: 8,
         paddingHorizontal: 12,
+        backgroundColor: colors.surface,
     },
     divider: {
         height: 1,
         borderTopWidth: 1,
-        borderColor: '#eee',
+        borderColor: colors.border,
         borderStyle: 'solid',
         marginVertical: 8,
     },
@@ -398,7 +413,7 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 14,
-        color: '#666',
+        color: colors.textSecondary,
         fontVariant: ['small-caps'],
     },
     resetButtonContainer: {
@@ -413,10 +428,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         alignItems: 'center',
         flexDirection: 'row',
+        borderRadius: 4,
+        marginBottom: 2,
     },
     selectedOptionText: {
         fontSize: 13,
-        color: '#333',
+        color: colors.text,
         flex: 1,
     },
     overridesContainer: {
@@ -434,6 +451,6 @@ const styles = StyleSheet.create({
     configOverrideText: {
         flex: -1,
         fontSize: 12,
-        color: '#333',
+        color: colors.text,
     },
 });

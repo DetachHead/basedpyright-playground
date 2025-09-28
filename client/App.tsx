@@ -14,6 +14,7 @@ import { MonacoEditor } from './MonacoEditor';
 import { PlaygroundSettings } from './PlaygroundSettings';
 import { ProblemsPanel } from './ProblemsPanel';
 import { RightPanel, RightPanelType } from './RightPanel';
+import { ThemeProvider, useTheme } from './ThemeContext';
 import { getStateFromUrl, updateUrlFromState } from './UrlUtils';
 import { getPyrightVersions } from './sessionManager'
 
@@ -38,8 +39,9 @@ export interface AppState {
 
 const initialState = getStateFromUrl() ?? getInitialStateFromLocalStorage();
 
-export default function App() {
+function AppContent() {
     const editorRef = useRef(null);
+    const { colors } = useTheme();
     const [appState, setAppState] = useState<AppState>({
         gotInitialState: false,
         code: '',
@@ -172,7 +174,7 @@ export default function App() {
 
     return (
         <MenuProvider>
-            <View style={styles.container}>
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <HeaderPanel
                     isRightPanelDisplayed={appState.isRightPanelDisplayed}
                     rightPanelType={appState.rightPanelType}
@@ -223,6 +225,14 @@ export default function App() {
                 />
             </View>
         </MenuProvider>
+    );
+}
+
+export default function App() {
+    return (
+        <ThemeProvider>
+            <AppContent />
+        </ThemeProvider>
     );
 }
 

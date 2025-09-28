@@ -10,6 +10,7 @@ import IconButton from './IconButton';
 import { AboutPanel } from './AboutPanel';
 import { SettingsPanel } from './SettingsPanel';
 import { PlaygroundSettings } from './PlaygroundSettings';
+import { useTheme, ThemeColors } from './ThemeContext';
 
 export enum RightPanelType {
     About,
@@ -31,6 +32,7 @@ export interface RightPanelProps {
 const rightPanelWidth = 320;
 
 export function RightPanel(props: RightPanelProps) {
+    const { colors } = useTheme();
     let panelContents: JSX.Element | undefined;
     let headerTitle = '';
 
@@ -72,6 +74,8 @@ export function RightPanel(props: RightPanelProps) {
         }).start();
     }, [widthAnimation, props.isRightPanelDisplayed]);
 
+    const styles = makeStyles(colors);
+
     return (
         <Animated.View style={[styles.animatedContainer, { width: widthAnimation }]}>
             <View style={styles.container}>
@@ -83,8 +87,8 @@ export function RightPanel(props: RightPanelProps) {
                         <IconButton
                             iconDefinition={icons.CloseOutlined}
                             iconSize={14}
-                            color={'#333'}
-                            hoverColor={'#000'}
+                            color={colors.text}
+                            hoverColor={colors.textSecondary}
                             title={'Close panel'}
                             onPress={() => {
                                 props.onShowRightPanel();
@@ -98,7 +102,7 @@ export function RightPanel(props: RightPanelProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     animatedContainer: {
         flexDirection: 'row',
         position: 'relative',
@@ -106,14 +110,7 @@ const styles = StyleSheet.create({
     container: {
         width: rightPanelWidth,
         alignSelf: 'stretch',
-        backgroundColor: '#f8f8f8',
-    },
-    contentContainer: {
-        flexGrow: 1,
-        flexShrink: 0,
-        flexBasis: 0,
-        flexDirection: 'column',
-        alignSelf: 'stretch',
+        backgroundColor: colors.surface,
     },
     headerContainer: {
         flexDirection: 'row',
@@ -121,14 +118,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderBottomWidth: 1,
         borderStyle: 'solid',
-        borderColor: '#ddd',
+        borderColor: colors.border,
         paddingLeft: 12,
         paddingRight: 4,
     },
     headerTitleText: {
-        color: '#333',
+        color: colors.text,
         fontSize: 14,
         fontWeight: 'bold',
+    },
+    contentContainer: {
+        flexGrow: 1,
+        flexShrink: 0,
+        flexBasis: 0,
+        flexDirection: 'column',
+        alignSelf: 'stretch',
     },
     headerControlsContainer: {
         flex: 1,

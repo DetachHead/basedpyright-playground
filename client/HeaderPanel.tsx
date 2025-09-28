@@ -8,6 +8,7 @@ import { Image, Linking, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useAssets } from 'expo-asset';
 import IconButton from './IconButton';
 import { RightPanelType } from './RightPanel';
+import { useTheme, ThemeColors } from './ThemeContext';
 
 const headerIconButtonSize = 20;
 
@@ -18,7 +19,9 @@ export interface HeaderPanelProps {
 }
 
 export function HeaderPanel(props: HeaderPanelProps) {
+    const { colors } = useTheme();
     const [assets, error] = useAssets([require('./assets/pyright_bw.png')]);
+    const styles = makeStyles(colors);
 
     let image = null;
     if (!error && assets) {
@@ -47,9 +50,9 @@ export function HeaderPanel(props: HeaderPanelProps) {
                         props.isRightPanelDisplayed &&
                         props.rightPanelType === RightPanelType.Settings
                     }
-                    color={'#fff'}
-                    hoverColor={'#eee'}
-                    disableColor={'#ffaa00'}
+                    color={colors.text}
+                    hoverColor={colors.textSecondary}
+                    disableColor={colors.accent}
                     title={'Playground settings'}
                     onPress={() => {
                         props.onShowRightPanel(RightPanelType.Settings);
@@ -62,8 +65,8 @@ export function HeaderPanel(props: HeaderPanelProps) {
                         props.isRightPanelDisplayed && props.rightPanelType === RightPanelType.About
                     }
                     color={'#fff'}
-                    hoverColor={'#eee'}
-                    disableColor={'#ffaa00'}
+                    hoverColor={colors.textSecondary}
+                    disableColor={colors.accent}
                     title={'About BasedPyright Playground'}
                     onPress={() => {
                         props.onShowRightPanel(RightPanelType.About);
@@ -74,7 +77,7 @@ export function HeaderPanel(props: HeaderPanelProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: -1,
         flexDirection: 'row',
@@ -84,6 +87,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#000',
         height: 42,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
     },
     pyrightIcon: {
         height: 24,

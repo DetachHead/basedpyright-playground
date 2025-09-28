@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import IconButton from './IconButton';
 import TextWithLink from './TextWithLink';
+import { useTheme, ThemeColors } from './ThemeContext';
 
 export interface AboutPanelProps {
     code: string;
@@ -15,6 +16,9 @@ export interface AboutPanelProps {
 }
 
 export function AboutPanel(props: AboutPanelProps) {
+    const { colors } = useTheme();
+    const styles = makeStyles(colors);
+
     return (
         <View style={styles.container}>
             <Text style={styles.headerText} selectable={false}>
@@ -138,7 +142,9 @@ interface CopyToClipboardButtonState {
 }
 
 function CopyToClipboardButton(props: CopyToClipboardButtonProps) {
+    const { colors } = useTheme();
     const [buttonState, setButtonState] = useState<CopyToClipboardButtonState>({ isCopied: false });
+    const styles = makeStyles(colors);
 
     return (
         <View style={styles.clipboardContainer}>
@@ -161,8 +167,8 @@ function CopyToClipboardButton(props: CopyToClipboardButtonProps) {
                         // Ignore the error.
                     }
                 }}
-                color={buttonState.isCopied ? '#090' : '#666'}
-                hoverColor={buttonState.isCopied ? '#090' : '#333'}
+                color={buttonState.isCopied ? colors.success : colors.textSecondary}
+                hoverColor={buttonState.isCopied ? colors.success : colors.text}
                 backgroundStyle={styles.clipboardButtonBackground}
                 hoverBackgroundStyle={styles.clipboardButtonBackgroundHover}
             />
@@ -173,17 +179,18 @@ function CopyToClipboardButton(props: CopyToClipboardButtonProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
         alignSelf: 'stretch',
         paddingVertical: 8,
         paddingHorizontal: 12,
+        backgroundColor: colors.surface,
     },
     headerText: {
         fontSize: 14,
-        color: '#666',
+        color: colors.textSecondary,
         marginBottom: 8,
         fontVariant: ['small-caps'],
     },
@@ -197,13 +204,13 @@ const styles = StyleSheet.create({
         marginLeft: 16,
         marginRight: 8,
         fontSize: 13,
-        color: '#333',
+        color: colors.text,
         marginBottom: 8,
     },
     divider: {
         height: 1,
         borderTopWidth: 1,
-        borderColor: '#eee',
+        borderColor: colors.border,
         borderStyle: 'solid',
         marginVertical: 8,
     },
@@ -218,19 +225,19 @@ const styles = StyleSheet.create({
         width: 26,
         paddingVertical: 4,
         paddingHorizontal: 4,
-        backgroundColor: '#fff',
+        backgroundColor: colors.background,
         borderWidth: 1,
         borderRadius: 4,
         borderStyle: 'solid',
-        borderColor: '#999',
+        borderColor: colors.border,
     },
     clipboardButtonBackgroundHover: {
-        borderColor: '#666',
+        borderColor: colors.textSecondary,
     },
     clipboardButtonText: {
         marginLeft: 8,
         fontSize: 13,
-        color: '#333',
+        color: colors.text,
         marginBottom: 2,
     },
 });
