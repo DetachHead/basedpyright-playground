@@ -5,6 +5,7 @@
 
 import { Pressable, StyleSheet, Text, TextStyle, ViewStyle } from 'react-native';
 import { useHover } from './HoverHook';
+import { useTheme, ThemeColors } from './ThemeContext';
 
 interface PushButtonProps {
     label: string;
@@ -18,7 +19,9 @@ interface PushButtonProps {
 }
 
 export default function PushButton(props: PushButtonProps) {
+    const { colors } = useTheme();
     const [hoverRef, isHovered] = useHover();
+    const styles = makeStyles(colors);
 
     let effectiveBackgroundStyle: (ViewStyle | ViewStyle[] | undefined)[] = [
         styles.defaultBackground,
@@ -54,30 +57,30 @@ export default function PushButton(props: PushButtonProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     baseBackground: {
         flexDirection: 'row',
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 4,
         borderWidth: 1,
-        borderColor: '#ffaa00',
+        borderColor: colors.accent,
     },
     defaultBackground: {
-        backgroundColor: '#f8f8f8',
+        backgroundColor: colors.surface,
     },
     defaultHoverBackground: {
-        backgroundColor: '#fff',
+        backgroundColor: colors.background,
     },
     disabledBackground: {
         backgroundColor: 'transparent',
-        borderColor: '#ccc',
+        borderColor: colors.textSecondary,
     },
     disabledText: {
-        color: '#ccc',
+        color: colors.textSecondary,
     },
     baseText: {
-        color: '#333',
+        color: colors.text,
         fontSize: 13,
     },
 });

@@ -7,6 +7,7 @@ import * as icons from '@ant-design/icons-svg';
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { MenuItem } from './Menu';
 import { createRef, useEffect, useState } from 'react';
+import { useTheme, ThemeColors } from './ThemeContext';
 
 export interface CheckmarkMenuProps {
     items: CheckmarkMenuItem[];
@@ -28,10 +29,12 @@ interface CheckmarkMenuState {
 }
 
 export function CheckmarkMenu(props: CheckmarkMenuProps) {
+    const { colors } = useTheme();
     const [state, setState] = useState<CheckmarkMenuState>({
         searchFilter: '',
     });
     const textInputRef = createRef<TextInput>();
+    const styles = makeStyles(colors);
 
     const searchFilter = state.searchFilter.toLowerCase().trim();
     const filteredItems = props.items.filter((item) => {
@@ -59,7 +62,7 @@ export function CheckmarkMenu(props: CheckmarkMenuProps) {
                         style={styles.searchBox}
                         value={state.searchFilter}
                         placeholder={'Search'}
-                        placeholderTextColor={'#ccc'}
+                        placeholderTextColor={colors.textSecondary}
                         onChangeText={(newValue) => {
                             setState((prevState) => {
                                 return { ...prevState, searchFilter: newValue };
@@ -98,7 +101,7 @@ export function CheckmarkMenu(props: CheckmarkMenuProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flexDirection: 'column',
         minWidth: 100,
@@ -110,15 +113,16 @@ const styles = StyleSheet.create({
         paddingTop: 4,
         paddingBottom: 8,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+        borderBottomColor: colors.border,
         borderStyle: 'solid',
     },
     searchBox: {
         fontSize: 13,
         padding: 4,
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: colors.border,
         borderStyle: 'solid',
-        backgroundColor: '#fff',
+        backgroundColor: colors.background,
+        color: colors.text,
     },
 });

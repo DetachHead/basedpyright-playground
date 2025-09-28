@@ -15,10 +15,7 @@ import {
 } from 'react-native-popup-menu';
 import { useHover } from './HoverHook';
 import { SvgIcon } from './SvgIcon';
-
-export const menuIconColor = '#ffaa00';
-export const panelTextColor = '#222';
-export const focusedMenuItemBackgroundColor = '#eee';
+import { useTheme, ThemeColors, Theme } from './ThemeContext';
 
 export interface MenuProps extends React.PropsWithChildren {
     name: string;
@@ -32,7 +29,9 @@ export interface MenuRef {
 }
 
 export const Menu = forwardRef(function Menu(props: MenuProps, ref: ForwardedRef<MenuRef>) {
+    const { colors, theme } = useTheme();
     const menuRef = useRef<RNMenu>(null);
+    const styles = makeStyles(colors, theme);
 
     useImperativeHandle(ref, () => {
         return {
@@ -56,16 +55,12 @@ export const Menu = forwardRef(function Menu(props: MenuProps, ref: ForwardedRef
         >
             <MenuTrigger />
             <MenuOptions
-                customStyles={
-                    props.isPopup
-                        ? {
-                              optionsContainer: {
-                                  backgroundColor: 'transparent',
-                                  shadowOpacity: 0,
-                              },
-                          }
-                        : undefined
-                }
+                customStyles={{
+                    optionsContainer: {
+                        backgroundColor: 'transparent',
+                        shadowOpacity: 0,
+                    },
+                }}
             >
                 <View style={styles.menuContainer}>{props.children}</View>
             </MenuOptions>
@@ -84,7 +79,9 @@ export interface MenuItemProps {
 }
 
 export function MenuItem(props: MenuItemProps) {
+    const { colors, theme } = useTheme();
     const [hoverRef, isHovered] = useHover();
+    const styles = makeStyles(colors, theme);
 
     // If there's a label filter, see if we can find it in the label.
     let filterOffset = -1;
@@ -142,7 +139,7 @@ export function MenuItem(props: MenuItemProps) {
                             <SvgIcon
                                 iconDefinition={props.iconDefinition}
                                 iconSize={14}
-                                color={props.iconDefinition ? menuIconColor : 'transparent'}
+                                color={props.iconDefinition ? colors.accent : 'transparent'}
                             />
                         ) : undefined}
                     </View>
@@ -153,7 +150,7 @@ export function MenuItem(props: MenuItemProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors, theme: Theme) => StyleSheet.create({
     container: {
         paddingVertical: 2,
         paddingHorizontal: 6,
@@ -176,18 +173,22 @@ const styles = StyleSheet.create({
         marginRight: 4,
     },
     focused: {
-        backgroundColor: focusedMenuItemBackgroundColor,
+        backgroundColor: theme === 'light' ? '#eee' : colors.surface,
     },
     menuContainer: {
         margin: 4,
+        backgroundColor: colors.background,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: colors.border,
     },
     labelText: {
         fontSize: 13,
         padding: 4,
-        color: panelTextColor,
+        color: colors.text,
     },
     labelFiltered: {
-        backgroundColor: '#ccc',
-        color: '#000',
+        backgroundColor: colors.accent,
+        color: colors.background,
     },
 });
