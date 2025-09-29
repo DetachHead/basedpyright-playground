@@ -10,6 +10,7 @@ export type Theme = 'light' | 'dark';
 export interface ThemeColors {
     background: string;
     surface: string;
+    hover: string;
     text: string;
     textSecondary: string;
     border: string;
@@ -24,6 +25,7 @@ export interface ThemeColors {
 const lightTheme: ThemeColors = {
     background: '#ffffff',
     surface: '#f8f9fa',
+    hover: '#eee',
     text: '#212529',
     textSecondary: '#6c757d',
     border: '#dee2e6',
@@ -38,6 +40,7 @@ const lightTheme: ThemeColors = {
 const darkTheme: ThemeColors = {
     background: '#1e1e1e',
     surface: '#252526',
+    hover: '#252526',
     text: '#cccccc',
     textSecondary: '#9d9d9d',
     border: '#404040',

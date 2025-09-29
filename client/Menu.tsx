@@ -173,7 +173,7 @@ const makeStyles = (colors: ThemeColors, theme: Theme) => StyleSheet.create({
         marginRight: 4,
     },
     focused: {
-        backgroundColor: theme === 'light' ? '#eee' : colors.surface,
+        backgroundColor: colors.hover,
     },
     menuContainer: {
         margin: 4,
