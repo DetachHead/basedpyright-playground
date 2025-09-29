@@ -31,7 +31,7 @@ export interface MenuRef {
 export const Menu = forwardRef(function Menu(props: MenuProps, ref: ForwardedRef<MenuRef>) {
     const { colors, theme } = useTheme();
     const menuRef = useRef<RNMenu>(null);
-    const styles = makeStyles(colors, theme);
+    const styles = makeStyles(colors);
 
     useImperativeHandle(ref, () => {
         return {
@@ -81,7 +81,7 @@ export interface MenuItemProps {
 export function MenuItem(props: MenuItemProps) {
     const { colors, theme } = useTheme();
     const [hoverRef, isHovered] = useHover();
-    const styles = makeStyles(colors, theme);
+    const styles = makeStyles(colors);
 
     // If there's a label filter, see if we can find it in the label.
     let filterOffset = -1;
@@ -150,7 +150,7 @@ export function MenuItem(props: MenuItemProps) {
     );
 }
 
-const makeStyles = (colors: ThemeColors, theme: Theme) => StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         paddingVertical: 2,
         paddingHorizontal: 6,
