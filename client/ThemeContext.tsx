@@ -1,5 +1,4 @@
 /*
- * Copyright (c) Eric Traut
  * Theme context and utilities for dark/light mode support.
  */
 
