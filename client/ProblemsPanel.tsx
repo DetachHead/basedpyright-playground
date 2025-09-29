@@ -19,6 +19,7 @@ import { Diagnostic, DiagnosticSeverity, Range } from 'vscode-languageserver-typ
 import { useHover } from './HoverHook';
 import { useEffect, useRef } from 'react';
 import { SvgIcon } from './SvgIcon';
+import { useTheme, ThemeColors } from './ThemeContext';
 
 export interface ProblemsPanelProps {
     diagnostics: Diagnostic[];
@@ -31,6 +32,8 @@ const problemsPanelHeight = 200;
 const problemsPanelHeightCollapsed = 32;
 
 export function ProblemsPanel(props: ProblemsPanelProps) {
+    const { colors } = useTheme();
+
     // We don't display hints in the problems panel.
     const filteredDiagnostics = props.diagnostics.filter(
         (diag) => diag.severity !== DiagnosticSeverity.Hint
@@ -52,6 +55,8 @@ export function ProblemsPanel(props: ProblemsPanelProps) {
         }).start();
     }, [heightAnimation, props.expandProblems]);
 
+    const styles = makeStyles(colors);
+
     return (
         <Animated.View style={[styles.animatedContainer, { height: heightAnimation }]}>
             <View style={styles.container}>
@@ -71,7 +76,7 @@ export function ProblemsPanel(props: ProblemsPanelProps) {
                                     <Text style={styles.waitingText} selectable={false}>
                                         Waiting for worker
                                     </Text>
-                                    <ActivityIndicator size={12} color="#fff" />
+                                    <ActivityIndicator size={12} color={colors.accent} />
                                 </View>
                             ) : undefined}
                         </View>
@@ -99,6 +104,8 @@ export function ProblemsPanel(props: ProblemsPanelProps) {
 
 function ProblemItem(props: { diagnostic: Diagnostic; onSelectRange: (range: Range) => void }) {
     const [hoverRef, isHovered] = useHover();
+    const { colors } = useTheme();
+    const styles = makeStyles(colors, isHovered);
 
     return (
         <Pressable
@@ -131,6 +138,9 @@ function ProblemItem(props: { diagnostic: Diagnostic; onSelectRange: (range: Ran
 }
 
 function NoProblemsItem() {
+    const { colors } = useTheme();
+    const styles = makeStyles(colors);
+
     return (
         <View style={styles.diagnosticContainer}>
             <View style={styles.diagnosticTextContainer}>
@@ -160,7 +170,7 @@ function ProblemIcon(props: { severity: DiagnosticSeverity }) {
     return <SvgIcon iconDefinition={iconDefinition} iconSize={14} color={iconColor} />;
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors, isHovered = false) => StyleSheet.create({
     animatedContainer: {
         position: 'relative',
         alignSelf: 'stretch',
@@ -168,10 +178,11 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
         height: problemsPanelHeight,
-        borderTopColor: '#ccc',
+        borderTopColor: colors.border,
         borderTopWidth: 1,
         borderStyle: 'solid',
         alignSelf: 'stretch',
+        backgroundColor: colors.background,
     },
     header: {
         height: 32,
@@ -180,6 +191,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignSelf: 'stretch',
         alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
     },
     headerContents: {
         flex: 1,
@@ -194,7 +207,6 @@ const styles = StyleSheet.create({
     },
     problemCountText: {
         fontSize: 9,
-        color: 'black',
     },
     problemCountBubble: {
         marginLeft: 6,
@@ -213,15 +225,16 @@ const styles = StyleSheet.create({
     },
     waitingText: {
         fontSize: 12,
-        color: '#fff',
+        color: colors.textSecondary,
         marginRight: 8,
     },
     diagnosticContainer: {
         padding: 4,
         flexDirection: 'row',
+        backgroundColor: isHovered ? colors.surface : 'transparent',
     },
     problemContainerHover: {
-        backgroundColor: '#eee',
+        backgroundColor: colors.surface,
     },
     diagnosticIconContainer: {
         marginTop: 1,
@@ -231,8 +244,9 @@ const styles = StyleSheet.create({
     diagnosticText: {
         fontSize: 13,
         lineHeight: 16,
+        color: colors.text,
     },
     diagnosticSourceText: {
-        color: '#aaa',
+        color: colors.textSecondary,
     },
 });

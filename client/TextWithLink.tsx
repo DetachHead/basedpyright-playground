@@ -5,6 +5,7 @@
 
 import { Linking, StyleProp, StyleSheet, Text, TextStyle } from 'react-native';
 import { useHover } from './HoverHook';
+import { useTheme, ThemeColors } from './ThemeContext';
 
 interface TextWithLinkProps extends React.PropsWithChildren {
     style?: StyleProp<TextStyle>;
@@ -13,7 +14,9 @@ interface TextWithLinkProps extends React.PropsWithChildren {
 }
 
 export default function TextWithLink(props: TextWithLinkProps) {
+    const { colors } = useTheme();
     const [hoverRef, isHovered] = useHover();
+    const styles = makeStyles(colors);
 
     return (
         <Text
@@ -33,11 +36,11 @@ export default function TextWithLink(props: TextWithLinkProps) {
     );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     default: {
-        color: '#ffaa00',
+        color: colors.accent,
     },
     defaultHover: {
-        color: '#333',
+        color: colors.text,
     },
 });

@@ -20,6 +20,7 @@ import {
     TextDocumentEdit,
 } from 'vscode-languageserver-types';
 import { LspClient } from './LspClient';
+import { useTheme, ThemeColors } from './ThemeContext';
 import { fromRange, toInlayHint, toRange, toSemanticTokens } from 'monaco-languageserver-types'
 
 // TODO: use monaco-languageserver-types for more conversaions. currently only used for inlay hints and semantic tokens
@@ -73,6 +74,7 @@ export const MonacoEditor = forwardRef(function MonacoEditor(
 ) {
     const editorRef = useRef(null);
     const monacoRef = useRef(null);
+    const { monacoTheme, colors } = useTheme();
 
     function handleEditorDidMount(
         editor: monaco.editor.IStandaloneCodeEditor,
@@ -150,6 +152,8 @@ export const MonacoEditor = forwardRef(function MonacoEditor(
         }
     }, [props.diagnostics]);
 
+    const styles = makeStyles(colors);
+
     return (
         <View style={styles.container}>
             <View style={styles.editor}>
@@ -157,7 +161,7 @@ export const MonacoEditor = forwardRef(function MonacoEditor(
                     options={options}
                     language={'python'}
                     value={props.code}
-                    theme="vs"
+                    theme={monacoTheme}
                     onChange={(value) => {
                         props.onUpdateCode(value);
                     }}
@@ -484,10 +488,11 @@ function getLspClientForModel(model: monaco.editor.ITextModel): LspClient | unde
     return registeredModels.find((m) => m.model === model)?.lspClient;
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (colors: ThemeColors) => StyleSheet.create({
     container: {
         flex: 1,
         paddingVertical: 4,
+        backgroundColor: colors.background,
     },
     editor: {
         position: 'absolute',
