@@ -50,8 +50,8 @@ export function HeaderPanel(props: HeaderPanelProps) {
                         props.isRightPanelDisplayed &&
                         props.rightPanelType === RightPanelType.Settings
                     }
-                    color={colors.text}
-                    hoverColor={colors.textSecondary}
+                    color={'#fff'}
+                    hoverColor={'#eee'}
                     disableColor={colors.accent}
                     title={'Playground settings'}
                     onPress={() => {
@@ -65,7 +65,7 @@ export function HeaderPanel(props: HeaderPanelProps) {
                         props.isRightPanelDisplayed && props.rightPanelType === RightPanelType.About
                     }
                     color={'#fff'}
-                    hoverColor={colors.textSecondary}
+                    hoverColor={'#eee'}
                     disableColor={colors.accent}
                     title={'About BasedPyright Playground'}
                     onPress={() => {
