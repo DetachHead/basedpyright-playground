@@ -652,6 +652,12 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStandard: false,
         isEnabledInStrict: false,
     },
+    {
+        name: 'reportSelfClsDefault',
+        description: "Diagnostics for providing a default value for a `self` or `cls` parameter",
+        isEnabledInStandard: false,
+        isEnabledInStrict: false,
+    },
 ];
 
 export const configSettingsAlphabetized = configSettings.sort((a, b) => {
