@@ -69,6 +69,12 @@ export const configSettings: PyrightConfigSetting[] = [
         isEnabledInStrict: false,
     },
     {
+        name: 'enableBasedFeatures',
+        description: 'Enable the use of basedpyright-specific breaking changes to the python type system',
+        isEnabledInStandard: false,
+        isEnabledInStrict: false,
+    },
+    {
         name: 'reportMissingModuleSource',
         description: 'Controls reporting of imports that cannot be resolved to source files',
         isEnabledInStandard: true,
