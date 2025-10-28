@@ -40,7 +40,7 @@ export function HeaderPanel(props: HeaderPanelProps) {
                 {image}
             </Pressable>
             <Text style={styles.titleText} selectable={false}>
-                BasedPyright Playground
+                Basedpyright Playground
             </Text>
             <View style={styles.controlsPanel}>
                 <IconButton
@@ -67,7 +67,7 @@ export function HeaderPanel(props: HeaderPanelProps) {
                     color={'#fff'}
                     hoverColor={'#eee'}
                     disableColor={colors.accent}
-                    title={'About BasedPyright Playground'}
+                    title={'About Basedpyright Playground'}
                     onPress={() => {
                         props.onShowRightPanel(RightPanelType.About);
                     }}
