@@ -1,5 +1,5 @@
-# BasedPyright Playground
+# Basedpyright Playground
 
-[BasedPyright Playground](https://basedpyright.com) provides a web experience for running BasedPyright.
+[Basedpyright Playground](https://basedpyright.com) provides a web experience for running Basedpyright.
 
-[BasedPyright](https://github.com/detachhead/basedpyright) is a static type checker for Python.
+[Basedpyright](https://github.com/detachhead/basedpyright) is a static type checker for Python.

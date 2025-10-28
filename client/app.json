@@ -1,6 +1,6 @@
 {
     "expo": {
-        "name": "BasedPyright Playground",
+        "name": "Basedpyright Playground",
         "version": "1.0.0",
         "userInterfaceStyle": "light",
         "assetBundlePatterns": ["**/*"],
