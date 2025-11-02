@@ -137,7 +137,7 @@ export function SettingsPanel(props: SettingsPanelProps) {
             <SettingsHeader headerText={'Python Version'} />
             <View style={styles.selectionContainer}>
                 <Text style={styles.selectedOptionText} selectable={false}>
-                    {props.settings.pythonVersion || 'Default (3.13)'}
+                    {props.settings.pythonVersion || 'Default (3.14)'}
                 </Text>
                 <MenuButton
                     onPress={() => {
@@ -148,6 +148,7 @@ export function SettingsPanel(props: SettingsPanelProps) {
                     <CheckmarkMenu
                         items={[
                             'Default',
+                            '3.15',
                             '3.14',
                             '3.13',
                             '3.12',
