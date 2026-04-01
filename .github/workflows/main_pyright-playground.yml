@@ -24,7 +24,7 @@ jobs:
         run: npm ci
         working-directory: client
       - name: typecheck
-        run: tsc
+        run: npm run typecheck
         working-directory: client
   deploy:
     if: github.ref == 'refs/heads/main'
