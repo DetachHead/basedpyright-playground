@@ -5,7 +5,8 @@
   "scripts": {
     "start": "expo start",
     "web": "npm run start -- --web",
-    "build": "tsc && expo export -p web"
+    "build": "npm run typecheck && expo export -p web",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
