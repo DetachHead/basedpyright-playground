@@ -26,14 +26,14 @@ export function AboutPanel(props: AboutPanelProps) {
             </Text>
             <Text style={styles.aboutText} selectable={false}>
                 {
-                    'Type or paste Python code into the text editor, and BasedPyright will report any errors it finds.'
+                    'Type or paste Python code into the text editor, and basedpyright will report any errors it finds.'
                 }
             </Text>
             <TextWithLink
                 style={styles.aboutTextLink}
                 url={'https://github.com/detachhead/basedpyright-playground'}
             >
-                {'BasedPyright Playground GitHub site'}
+                {'Basedpyright Playground GitHub site'}
             </TextWithLink>
 
             <View style={styles.divider} />
@@ -113,19 +113,19 @@ export function AboutPanel(props: AboutPanelProps) {
 
             <View style={styles.divider} />
             <Text style={styles.headerText} selectable={false}>
-                {'BasedPyright'}
+                {'Basedpyright'}
             </Text>
             <Text style={styles.aboutText} selectable={false}>
-                {'BasedPyright is a fork of pyright with various type checking improvements, improved vscode support and pylance features built into the language server.'}
+                {'Basedpyright is a fork of pyright with various type checking improvements, improved vscode support and pylance features built into the language server.'}
             </Text>
             <TextWithLink
                 style={styles.aboutTextLink}
                 url={'https://detachhead.github.io/basedpyright/#/'}
             >
-                {'BasedPyright documentation'}
+                {'Basedpyright documentation'}
             </TextWithLink>
             <TextWithLink style={styles.aboutTextLink} url={'https://github.com/detachhead/basedpyright'}>
-                {'BasedPyright GitHub site'}
+                {'Basedpyright GitHub site'}
             </TextWithLink>
         </View>
     );
