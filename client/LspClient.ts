@@ -148,6 +148,9 @@ export class LspClient {
                 }
             },
             initializationOptions: {
+                // typeshedPath is no longer needed, see https://github.com/DetachHead/basedpyright/pull/1890
+                // we keep it here for backwards compatibility so that older basedpyright versions still work in the playground.
+                // on newer versions, this points to a non-existent path and falls back to typeshed-fallback (the default)
                 files: {[rootPath + fileName]: this._documentText, [rootPath+'pyrightconfig.json']: JSON.stringify({typeshedPath: '/typeshed', ...sessionOptions, ...sessionOptions.configOverrides})}
             }
         };
